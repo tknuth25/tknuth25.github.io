@@ -47,6 +47,16 @@
       width: 100% !important;
       border-radius: 6px;
     }
+    .success-banner {
+      text-align: center;
+      background: #e6ffed;
+      border: 1px solid #b7eb8f;
+      padding: 0.5rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      color: #135200;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -62,63 +72,59 @@
   <!-- Dataset Section -->
   <div class="card">
     <h2>Dataset (CSV)</h2>
+    <div id="banner" class="success-banner" style="display:none;">
+      ✅ Dataset loaded successfully
+    </div>
     <table id="csvTable" class="display"></table>
   </div>
 
   <script>
-
-  $.fn.dataTable.ext.errMode = 'none';
-  // Load Python script into <code>
-  fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
-    .then(response => response.text())
-    .then(code => {
-      document.getElementById("script-content").textContent = code;
-      hljs.highlightElement(document.getElementById("script-content"));
-    });
-
-  // Load CSV into DataTable
-  Papa.parse("NFL Offensive Ratings Databuild (2000s) (TK).csv", {
-  download: true,
-  header: true,
-  skipEmptyLines: true,
-  complete: function(results) {
-    // 🔥 suppression here
+    // 🔹 Suppress ALL DataTables popups and console warnings
     $.fn.dataTable.ext.errMode = 'none';
-    if ($.fn.dataTable.util && $.fn.dataTable.util.log) {
-      $.fn.dataTable.util.log = function() { return null; };
-    }
-    const originalWarn = console.warn;
-    const originalError = console.error;
-    console.warn = function() {};
-    console.error = function() {};
-    setTimeout(() => {
-      console.warn = originalWarn;
-      console.error = originalError;
-    }, 500);
 
-    // init DataTable
-    $('#csvTable').DataTable({
-      data: results.data,
-      columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
-      pageLength: 25,
-      lengthMenu: [10, 25, 50, 100],
-      responsive: true
+    // 🔹 Load Python script into <code>
+    fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
+      .then(response => response.text())
+      .then(code => {
+        document.getElementById("script-content").textContent = code;
+        hljs.highlightElement(document.getElementById("script-content"));
+      });
+
+    // 🔹 Load CSV into DataTable
+    Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        let rows = results.data;
+
+        // 🔹 Auto-clean rows: truncate/pad to match header length
+        const headers = Object.keys(rows[0]);
+        rows = rows.map(row => {
+          const cleaned = {};
+          headers.forEach(h => {
+            cleaned[h] = row[h] !== undefined ? row[h] : "";
+          });
+          return cleaned;
+        });
+
+        // 🔹 Show banner
+        document.getElementById("banner").style.display = "block";
+
+        // 🔹 Initialize DataTable
+        $('#csvTable').DataTable({
+          data: rows,
+          columns: headers.map(key => ({ title: key, data: key })),
+          pageLength: 25,
+          lengthMenu: [10, 25, 50, 100],
+          responsive: true
+        });
+      },
+      error: function(err, file, inputElem, reason) {
+        console.error("PapaParse error:", err, reason);
+      }
     });
-  }
-});
-      // Restore console.warn after DataTable is done
-      setTimeout(() => { console.warn = originalWarn; }, 100);
-    },
-    error: function(err, file, inputElem, reason) {
-      console.error("PapaParse error:", err, reason);
-    }
-  });
-</script>
+  </script>
 
 </body>
 </html>
-
-
-
-
-
