@@ -5,11 +5,10 @@
   <title>Python Script & Dataset</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Highlight.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <!-- Highlight.js (theme + core + Python) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <script>hljs.highlightAll();</script>
 
   <!-- jQuery + DataTables -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -45,7 +44,11 @@
       overflow-y: scroll;
       border: 1px solid #ddd;
       border-radius: 6px;
-      background: #1e1e1e; /* dark background for syntax highlighting */
+      background: #1e1e1e; /* match highlight.js dark theme */
+    }
+    .code-container pre {
+      background: transparent; /* let hljs theme show through */
+      color: inherit;
     }
     table.dataTable { width: 100% !important; border-radius: 6px; }
     .success-banner {
