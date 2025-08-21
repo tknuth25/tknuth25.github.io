@@ -9,15 +9,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <script>
-    hljs.registerLanguage("python", window.hljsDefinePython);
-  </script>
 
   <!-- Highlight.js line numbers plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+
   <style>
     /* Line numbers styling */
-    .hljs-ln-numbers {
+    td.hljs-ln-numbers {
       text-align: right;
       border-right: 1px solid #555;
       color: #888;
@@ -25,7 +23,7 @@
       padding-right: 10px;
       vertical-align: top;
     }
-    .hljs-ln-code {
+    td.hljs-ln-code {
       padding-left: 10px;
     }
 
@@ -113,6 +111,9 @@
   </div>
 
   <script>
+    // Register Python for HLJS
+    hljs.registerLanguage("python", window.hljsDefinePython);
+
     // Suppress DataTables popups
     $.fn.dataTable.ext.errMode = 'none';
 
@@ -126,8 +127,13 @@
         const scriptEl = document.getElementById("script-content");
         const result = hljs.highlight(code, { language: 'python' });
         scriptEl.innerHTML = result.value;
-        // apply line numbers
-        hljs.lineNumbersBlock(scriptEl);
+
+        // Apply line numbers if plugin is loaded
+        if (typeof hljs.lineNumbersBlock === "function") {
+          hljs.lineNumbersBlock(scriptEl);
+        } else {
+          console.warn("⚠️ highlightjs-line-numbers.js not available.");
+        }
       })
       .catch(err => {
         document.getElementById("script-content").textContent = "❌ Error loading script: " + err.message;
