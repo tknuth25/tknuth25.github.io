@@ -67,7 +67,9 @@
 
   <script>
     // Suppress DataTables warnings globally
-    $.fn.dataTable.ext.errMode = 'none';
+    $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+    // do nothing
+  };
 
     // Load Python script into <code>
     fetch("NFL Player Offensive Ratings (Adjusted to 2000s standard).py")
@@ -100,3 +102,4 @@
 
 </body>
 </html>
+
