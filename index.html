@@ -61,12 +61,10 @@
       });
 
     // Load CSV into DataTable
-    Papa.parse("https://raw.githubusercontent.com/tknuth25/tknuth25.github.io/refs/heads/main/NFL%20Offensive%20Ratings%20Data%20Build%20(2000s)%20(TK).csv", {
+    Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
   download: true,
   header: true,
-  skipEmptyLines: true,
   complete: function(results) {
-    console.log(results.data); // debug
     $('#csvTable').DataTable({
       data: results.data,
       columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key }))
@@ -77,6 +75,7 @@
 
 </body>
 </html>
+
 
 
 
