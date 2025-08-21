@@ -43,11 +43,17 @@
     }
     /* 🔹 Limit Python script to ~100 lines with scroll */
     .code-container {
-      max-height: 600px; /* ~100 lines depending on font size */
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-    }
+    max-height: 600px;   /* Limit to ~100 lines */
+    overflow-y: scroll;  /* Force scroll */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f9f9f9;
+  }
+
+  .code-container pre {
+    margin: 0; /* Remove extra spacing */
+    padding: 1rem;
+  }
     table.dataTable { width: 100% !important; border-radius: 6px; }
     .success-banner {
       text-align: center;
@@ -79,11 +85,11 @@
 
   <!-- Python Script -->
   <div class="card">
-    <h2>Python Script</h2>
-    <div class="code-container">
-      <pre><code class="language-python" id="script-content"></code></pre>
-    </div>
+  <h2>Python Script</h2>
+  <div class="code-container">
+    <pre><code class="language-python" id="script-content"></code></pre>
   </div>
+</div>
 
   <!-- Dataset -->
   <div class="card">
@@ -152,3 +158,4 @@
 
 </body>
 </html>
+
