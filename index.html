@@ -66,40 +66,44 @@
   </div>
 
   <script>
-    // Suppress DataTables warnings globally
-    $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-    // do nothing
-  };
+  // Load Python script into <code>
+  fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
+    .then(response => response.text())
+    .then(code => {
+      document.getElementById("script-content").textContent = code;
+      hljs.highlightElement(document.getElementById("script-content"));
+    });
 
-    // Load Python script into <code>
-    fetch("NFL Player Offensive Ratings (Adjusted to 2000s standard).py")
-      .then(response => response.text())
-      .then(code => {
-        document.getElementById("script-content").textContent = code;
-        hljs.highlightElement(document.getElementById("script-content"));
+  // Load CSV into DataTable
+  Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      console.log("Parsed rows:", results.data.length);
+
+      // Temporarily suppress console warnings during DataTable init
+      const originalWarn = console.warn;
+      console.warn = function() {};
+
+      $('#csvTable').DataTable({
+        data: results.data,
+        columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
+        pageLength: 25,
+        lengthMenu: [10, 25, 50, 100],
+        responsive: true
       });
 
-    // Load CSV into DataTable
-    Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function(results) {
-        console.log("Parsed rows:", results.data.length);
-        $('#csvTable').DataTable({
-          data: results.data,
-          columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
-          pageLength: 25,        // show 25 rows by default
-          lengthMenu: [10, 25, 50, 100],
-          responsive: true
-        });
-      },
-      error: function(err, file, inputElem, reason) {
-        console.error("PapaParse error:", err, reason);
-      }
-    });
-  </script>
+      // Restore console.warn after DataTable is done
+      setTimeout(() => { console.warn = originalWarn; }, 100);
+    },
+    error: function(err, file, inputElem, reason) {
+      console.error("PapaParse error:", err, reason);
+    }
+  });
+</script>
 
 </body>
 </html>
+
 
