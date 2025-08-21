@@ -39,6 +39,14 @@
       padding: 1rem;
       border-radius: 6px;
       overflow-x: auto;
+      margin: 0;
+    }
+    /* 🔹 Limit Python script to ~100 lines with scroll */
+    .code-container {
+      max-height: 600px; /* ~100 lines depending on font size */
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 6px;
     }
     table.dataTable { width: 100% !important; border-radius: 6px; }
     .success-banner {
@@ -72,7 +80,9 @@
   <!-- Python Script -->
   <div class="card">
     <h2>Python Script</h2>
-    <pre><code class="language-python" id="script-content"></code></pre>
+    <div class="code-container">
+      <pre><code class="language-python" id="script-content"></code></pre>
+    </div>
   </div>
 
   <!-- Dataset -->
@@ -90,7 +100,7 @@
     // Load Python script
     fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
       .then(response => {
-        if (!response.ok) throw new Error("Could not fetch script.py");
+        if (!response.ok) throw new Error("Could not fetch Python script");
         return response.text();
       })
       .then(code => {
@@ -113,17 +123,15 @@
 
           const headers = Object.keys(rows[0]);
 
-          // Clean rows (pad/truncate fields)
+          // Clean rows
           rows = rows.map(row => {
             const cleaned = {};
             headers.forEach(h => { cleaned[h] = row[h] ?? ""; });
             return cleaned;
           });
 
-          // Success banner
           document.getElementById("banner-success").style.display = "block";
 
-          // Init DataTable
           $('#csvTable').DataTable({
             data: rows,
             columns: headers.map(key => ({ title: key, data: key })),
