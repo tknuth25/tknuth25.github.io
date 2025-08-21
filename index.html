@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
 
-  <!-- DataTables for CSV -->
+  <!-- DataTables -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -20,21 +20,32 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background: #f9f9f9;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f4f6f8;
+      color: #333;
     }
-    h1, h2 {
-      margin-top: 2rem;
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #fff;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     pre {
-      background: #f5f5f5;
+      background: #f9f9f9;
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
       overflow-x: auto;
     }
     table.dataTable {
       width: 100% !important;
+      border-radius: 6px;
     }
   </style>
 </head>
@@ -43,17 +54,23 @@
   <h1>My Python Project</h1>
 
   <!-- Python Script Section -->
-  <h2>Python Script</h2>
-  <pre><code class="language-python" id="script-content">
-  </code></pre>
+  <div class="card">
+    <h2>Python Script</h2>
+    <pre><code class="language-python" id="script-content"></code></pre>
+  </div>
 
   <!-- Dataset Section -->
-  <h2>Dataset (CSV)</h2>
-  <table id="csvTable" class="display"></table>
+  <div class="card">
+    <h2>Dataset (CSV)</h2>
+    <table id="csvTable" class="display"></table>
+  </div>
 
   <script>
+    // Suppress DataTables warnings globally
+    $.fn.dataTable.ext.errMode = 'none';
+
     // Load Python script into <code>
-    fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
+    fetch("NFL Player Offensive Ratings (Adjusted to 2000s standard).py")
       .then(response => response.text())
       .then(code => {
         document.getElementById("script-content").textContent = code;
@@ -62,22 +79,24 @@
 
     // Load CSV into DataTable
     Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
-  download: true,
-  header: true,
-  complete: function(results) {
-    $('#csvTable').DataTable({
-      data: results.data,
-      columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key }))
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        console.log("Parsed rows:", results.data.length);
+        $('#csvTable').DataTable({
+          data: results.data,
+          columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
+          pageLength: 25,        // show 25 rows by default
+          lengthMenu: [10, 25, 50, 100],
+          responsive: true
+        });
+      },
+      error: function(err, file, inputElem, reason) {
+        console.error("PapaParse error:", err, reason);
+      }
     });
-  }
-});
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
