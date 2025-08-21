@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Script & Dataset</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Highlight.js for Python syntax -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <!-- DataTables for CSV -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f9f9f9;
+    }
+    h1, h2 {
+      margin-top: 2rem;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    table.dataTable {
+      width: 100% !important;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Python Project</h1>
+
+  <!-- Python Script Section -->
+  <h2>Python Script</h2>
+  <pre><code class="language-python" id="script-content">
+  </code></pre>
+
+  <!-- Dataset Section -->
+  <h2>Dataset (CSV)</h2>
+  <table id="csvTable" class="display"></table>
+
+  <script>
+    // Load Python script into <code>
+    fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
+      .then(response => response.text())
+      .then(code => {
+        document.getElementById("script-content").textContent = code;
+        hljs.highlightElement(document.getElementById("script-content"));
+      });
+
+    // Load CSV into DataTable
+    Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        $('#csvTable').DataTable({
+          data: results.data,
+          columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key }))
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
