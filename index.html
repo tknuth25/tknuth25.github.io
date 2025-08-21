@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Highlight.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
   <script>hljs.highlightAll();</script>
 
   <!-- jQuery + DataTables -->
@@ -35,25 +36,17 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     pre {
-      background: #f9f9f9;
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
       margin: 0;
+      padding: 1rem;
     }
-    /* 🔹 Limit Python script to ~100 lines with scroll */
+    /* 🔹 Scroll box for Python script */
     .code-container {
-    max-height: 600px;   /* Limit to ~100 lines */
-    overflow-y: scroll;  /* Force scroll */
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #f9f9f9;
-  }
-
-  .code-container pre {
-    margin: 0; /* Remove extra spacing */
-    padding: 1rem;
-  }
+      max-height: 600px;   /* ~100 lines */
+      overflow-y: scroll;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #1e1e1e; /* dark background for syntax highlighting */
+    }
     table.dataTable { width: 100% !important; border-radius: 6px; }
     .success-banner {
       text-align: center;
@@ -85,11 +78,11 @@
 
   <!-- Python Script -->
   <div class="card">
-  <h2>Python Script</h2>
-  <div class="code-container">
-    <pre><code class="language-python" id="script-content"></code></pre>
+    <h2>Python Script</h2>
+    <div class="code-container">
+      <pre><code class="language-python" id="script-content"></code></pre>
+    </div>
   </div>
-</div>
 
   <!-- Dataset -->
   <div class="card">
@@ -110,8 +103,9 @@
         return response.text();
       })
       .then(code => {
-        document.getElementById("script-content").textContent = code;
-        hljs.highlightElement(document.getElementById("script-content"));
+        const scriptEl = document.getElementById("script-content");
+        scriptEl.textContent = code;
+        hljs.highlightElement(scriptEl); // apply syntax highlighting
       })
       .catch(err => {
         document.getElementById("script-content").textContent = "❌ Error loading script: " + err.message;
@@ -129,7 +123,6 @@
 
           const headers = Object.keys(rows[0]);
 
-          // Clean rows
           rows = rows.map(row => {
             const cleaned = {};
             headers.forEach(h => { cleaned[h] = row[h] ?? ""; });
@@ -158,4 +151,3 @@
 
 </body>
 </html>
-
