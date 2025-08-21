@@ -5,7 +5,7 @@
   <title>Python Script & Dataset</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Highlight.js (core + python + theme) -->
+  <!-- Highlight.js (theme + python support) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
@@ -13,20 +13,15 @@
   <!-- Highlight.js line numbers plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
 
-  <style>
-    /* Line numbers styling */
-    td.hljs-ln-numbers {
-      text-align: right;
-      border-right: 1px solid #555;
-      color: #888;
-      user-select: none;
-      padding-right: 10px;
-      vertical-align: top;
-    }
-    td.hljs-ln-code {
-      padding-left: 10px;
-    }
+  <!-- jQuery + DataTables -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+  <!-- PapaParse -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -42,21 +37,34 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
+    /* Scrollable code box */
+    .code-container {
+      max-height: 600px; /* ~100 lines */
+      overflow-y: auto;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #1e1e1e;
+    }
     pre {
       margin: 0;
       padding: 1rem;
     }
-    .code-container {
-      max-height: 600px;
-      overflow-y: scroll;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #1e1e1e;
+
+    /* Line numbers column */
+    td.hljs-ln-numbers {
+      text-align: right;
+      border-right: 1px solid #555;
+      color: #888;
+      user-select: none;
+      padding-right: 10px;
+      vertical-align: top;
     }
-    .code-container pre {
-      background: transparent;
-      color: inherit;
+    td.hljs-ln-code {
+      padding-left: 10px;
     }
+
+    /* DataTables */
     table.dataTable { width: 100% !important; border-radius: 6px; }
     .success-banner {
       text-align: center;
@@ -81,14 +89,6 @@
       display: none;
     }
   </style>
-
-  <!-- jQuery + DataTables -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-  <!-- PapaParse -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
@@ -98,7 +98,7 @@
   <div class="card">
     <h2>Python Script</h2>
     <div class="code-container">
-      <pre><code id="script-content" class="hljs language-python"></code></pre>
+      <pre><code class="language-python" id="script-content"></code></pre>
     </div>
   </div>
 
@@ -111,10 +111,7 @@
   </div>
 
   <script>
-    // Register Python for HLJS
-    hljs.registerLanguage("python", window.hljsDefinePython);
-
-    // Suppress DataTables popups
+    // Suppress DataTables warnings
     $.fn.dataTable.ext.errMode = 'none';
 
     // Load Python script
@@ -124,19 +121,14 @@
         return response.text();
       })
       .then(code => {
-        const scriptEl = document.getElementById("script-content");
-        const result = hljs.highlight(code, { language: 'python' });
-        scriptEl.innerHTML = result.value;
-
-        // Apply line numbers if plugin is loaded
-        if (typeof hljs.lineNumbersBlock === "function") {
-          hljs.lineNumbersBlock(scriptEl);
-        } else {
-          console.warn("⚠️ highlightjs-line-numbers.js not available.");
-        }
+        const el = document.getElementById("script-content");
+        el.textContent = code;              // insert raw code
+        hljs.highlightElement(el);          // apply syntax coloring
+        hljs.lineNumbersBlock(el);          // add line numbers
       })
       .catch(err => {
-        document.getElementById("script-content").textContent = "❌ Error loading script: " + err.message;
+        document.getElementById("script-content").textContent =
+          "❌ Error loading script: " + err.message;
       });
 
     // Load CSV
@@ -170,8 +162,8 @@
           document.getElementById("banner-error").style.display = "block";
         }
       },
-      error: function(err, file, inputElem, reason) {
-        console.error("PapaParse error:", err, reason);
+      error: function(err) {
+        console.error("PapaParse error:", err);
         document.getElementById("banner-error").style.display = "block";
       }
     });
