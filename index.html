@@ -82,25 +82,35 @@
     });
 
   // Load CSV into DataTable
-  Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      console.log("Parsed rows:", results.data.length);
+  Papa.parse("NFL Offensive Ratings Databuild (2000s) (TK).csv", {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+    // 🔥 suppression here
+    $.fn.dataTable.ext.errMode = 'none';
+    if ($.fn.dataTable.util && $.fn.dataTable.util.log) {
+      $.fn.dataTable.util.log = function() { return null; };
+    }
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    console.warn = function() {};
+    console.error = function() {};
+    setTimeout(() => {
+      console.warn = originalWarn;
+      console.error = originalError;
+    }, 500);
 
-      // Temporarily suppress console warnings during DataTable init
-      const originalWarn = console.warn;
-      console.warn = function() {};
-
-      $('#csvTable').DataTable({
-        data: results.data,
-        columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
-        pageLength: 25,
-        lengthMenu: [10, 25, 50, 100],
-        responsive: true
-      });
-
+    // init DataTable
+    $('#csvTable').DataTable({
+      data: results.data,
+      columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key })),
+      pageLength: 25,
+      lengthMenu: [10, 25, 50, 100],
+      responsive: true
+    });
+  }
+});
       // Restore console.warn after DataTable is done
       setTimeout(() => { console.warn = originalWarn; }, 100);
     },
@@ -112,6 +122,7 @@
 
 </body>
 </html>
+
 
 
 
