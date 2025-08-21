@@ -66,6 +66,13 @@
   </div>
 
   <script>
+
+  $.fn.dataTable.ext.errMode = 'none';
+  if ($.fn.dataTable.ext._fnLog) {
+    $.fn.dataTable.ext._fnLog = function() { return null; };
+  } else if ($.fn.dataTable.ext.internal) {
+    $.fn.dataTable.ext.internal._fnLog = function() { return null; };
+  }
   // Load Python script into <code>
   fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
     .then(response => response.text())
@@ -105,5 +112,6 @@
 
 </body>
 </html>
+
 
 
