@@ -83,7 +83,7 @@
   <div class="card">
     <h2>Python Script</h2>
     <div class="code-container">
-      <pre><code class="language-python" id="script-content"></code></pre>
+      <pre><code id="script-content" class="language-python hljs"></code></pre>
     </div>
   </div>
 
@@ -107,8 +107,10 @@
       })
       .then(code => {
         const scriptEl = document.getElementById("script-content");
-        scriptEl.textContent = code;
-        hljs.highlightElement(scriptEl); // apply syntax highlighting
+        scriptEl.classList.add("language-python", "hljs");
+        // Explicit Python highlighting
+        const result = hljs.highlight(code, { language: 'python' });
+        scriptEl.innerHTML = result.value;
       })
       .catch(err => {
         document.getElementById("script-content").textContent = "❌ Error loading script: " + err.message;
