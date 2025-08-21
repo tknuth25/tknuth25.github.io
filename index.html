@@ -61,17 +61,19 @@
       });
 
     // Load CSV into DataTable
-    Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
-      download: true,
-      header: true,
-      complete: function(results) {
-        $('#csvTable').DataTable({
-          data: results.data,
-          columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key }))
-        });
-      }
+    Papa.parse("data.csv", {
+  download: true,
+  header: true,
+  skipEmptyLines: true,   // 👈 add this
+  complete: function(results) {
+    $('#csvTable').DataTable({
+      data: results.data,
+      columns: Object.keys(results.data[0]).map(key => ({ title: key, data: key }))
     });
+  }
+});
   </script>
 
 </body>
 </html>
+
