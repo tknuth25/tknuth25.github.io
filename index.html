@@ -96,9 +96,16 @@
 
   <!-- Python Script -->
   <div class="card">
-    <h2>Python Football Reference WebScraper</h2>
+    <h2>Football Reference Webscraper - Offense</h2>
     <div class="code-container">
       <pre><code class="language-python" id="script-content"></code></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Football Reference Webscraper - Defense</h2>
+    <div class="code-container">
+      <pre><code class="language-python" id="script-content1"></code></pre>
     </div>
   </div>
 
@@ -114,7 +121,7 @@
     // Suppress DataTables warnings
     $.fn.dataTable.ext.errMode = 'none';
 
-    // Load Python script
+    // Load Python scripts
     fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
       .then(response => {
         if (!response.ok) throw new Error("Could not fetch Python script");
@@ -128,6 +135,22 @@
       })
       .catch(err => {
         document.getElementById("script-content").textContent =
+          "❌ Error loading script: " + err.message;
+      });
+
+    fetch("NFL Player Defense Ratings (Adjusted to 2000s standard).py")
+      .then(response => {
+        if (!response.ok) throw new Error("Could not fetch Python script");
+        return response.text();
+      })
+      .then(code => {
+        const el = document.getElementById("script-content1");
+        el.textContent = code;              // insert raw code
+        hljs.highlightElement(el);          // apply syntax coloring
+        hljs.lineNumbersBlock(el);          // add line numbers
+      })
+      .catch(err => {
+        document.getElementById("script-content1").textContent =
           "❌ Error loading script: " + err.message;
       });
 
@@ -171,5 +194,6 @@
 
 </body>
 </html>
+
 
 
