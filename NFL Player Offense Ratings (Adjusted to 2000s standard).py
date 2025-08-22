@@ -363,9 +363,7 @@ a_q = (a_wr_sub['a'].mean()+a_wr_sub['b'].mean()+a_wr_sub['c'].mean())/0.667
 a_wr_sub['Rate'] = ((a_wr_sub['a']+a_wr_sub['b']+a_wr_sub['c'])/a_q)*100
 a_wr_sub['Rate'].mean()
 
-#%%
 # WR Intermediate Statistics Calculations
-
 a_wr_df['catch_rate'] = a_wr_df['Rec']/a_wr_df['Tgt']
 a_wr_df['yds_prec'] = a_wr_df['Yds']/a_wr_df['Rec']
 a_wr_df['td_prec'] = a_wr_df['TD']/a_wr_df['Rec']
@@ -436,5 +434,3 @@ offense_final = pd.concat(offense_df_list,ignore_index=True)
 perfect_offense = offense_final.loc[offense_final['rating_adj_1']==158.3]
 
 # offense_final.to_csv(r'[ENTER YOUR PATH HERE]')
-
-
