@@ -162,13 +162,13 @@ a_defense_df['pos_cat'] = a_defense_df['Pos'].astype(str).apply(lambda g: "DL"
                                                          for y in ["rolb","llb",'rilb','mlb','llb','rlb','lilb','lolb','lb'])   
                                                          else "DB" if any (j in g.lower()
                                                          for j in ['rcb','db','fs','ss','lcb','rdh','ldh','s','cb'])
-                                                         else np.NaN)
+                                                         else np.nan)
 
 # DLine Rating Calculations
 dline_sub = a_defense_df.loc[a_defense_df['pos_cat']=='DL'].copy()
 dline_sub_1 = dline_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','Awards']].copy()
 
 a_dline_sub = dline_sub_1.loc[(dline_sub['G']>=10) & (dline_sub['Year']>=2000) & (dline_sub['Year']<=2010)].copy()
 
@@ -255,13 +255,13 @@ c_dline_sub['rating_adj'].mean()
 
 dline_final = b_dline_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj','Awards']].copy()
 
 # Linebacker Rating Calculations
 lb_sub = a_defense_df.loc[a_defense_df['pos_cat']=='LB'].copy()
 lb_sub_1 = lb_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','Awards']].copy()
 
 a_lb_sub = lb_sub_1.loc[(lb_sub_1['G']>=10) & (lb_sub_1['Year']>=2000) & (lb_sub_1['Year']<=2010)].copy()
 
@@ -350,13 +350,13 @@ c_lb_sub['rating_adj'].mean()
 
 lb_final = b_lb_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj','Awards']].copy()
 
 # DB Rating Calculations
 db_sub = a_defense_df.loc[a_defense_df['pos_cat']=='DB'].copy()
 db_sub_1 = db_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','Awards']].copy()
 
 a_db_sub = db_sub_1.loc[(db_sub_1['G']>=10) & (db_sub_1['Year']>=2000) & (db_sub_1['Year']<=2010)].copy()
 
@@ -430,7 +430,7 @@ c_db_sub['rating_adj'].mean()
 
 db_final = b_db_sub[['Player', 'Tm', 'Age', 'Pos', 'G', 'GS', 'Int', 'Int Yds', 'IntTD', 'Lng',
        'PD', 'FF', 'Fmb', 'FR', 'Fmb Yds', 'FRTD', 'Sk', 'combo_tkl', 'solo_tkl',
-       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj']].copy()
+       'ast_tkl', 'tfl', 'qb_hits', 'safety', 'Year','pos_cat','a', 'b', 'c', 'd','rating_adj','Awards']].copy()
 
 # Final Defense Dataset of position-specific ratings, adjusted to 2000s standard
 # Missing values are set to 0
@@ -461,19 +461,15 @@ db_final['rating_adj_1'] = (db_final['rating_adj']-db_min)*(158.3/db_range)
 final_defense = pd.concat(df_list,ignore_index=True)
 
 # Assigning Pro Bowl and All Pro Flags
-final_defense['pro_bowl'] = final_defense['Player'].astype(str).apply(lambda g: 1 
-                                                         if "*" in g.lower()
-                                                         else 0)
+final_defense['pro_bowl'] = np.where(final_defense['Awards'].astype(str).str.contains("PB"),1,0)
+final_defense['first_all_pro'] = np.where(final_defense['Awards'].astype(str).str.contains("AP-1"),1,0)
+final_defense['second_all_pro'] = np.where(final_defense['Awards'].astype(str).str.contains("AP-2"),1,0)
 
-final_defense['first_all_pro'] = final_defense['Player'].astype(str).apply(lambda g: 1 
-                                                         if "+" in g.lower()
-                                                         else 0)
 
 final_defense['Player'] = final_defense['Player'].astype(str).str.replace('*','').str.replace('+','')
 
 # Final Formatting and  Creating Subset of Players with Perfect Ratings in a Season
-a_final_defense = final_defense[['Player','Year','Tm','Age','Pos','G','GS','rating_adj_1','df_id','pro_bowl','first_all_pro']].copy()
+a_final_defense = final_defense[['Player','Year','Tm','Age','Pos','G','GS','rating_adj_1','df_id','pro_bowl','first_all_pro','second_all_pro']].copy()
 perfect_defense = final_defense.loc[final_defense['rating_adj_1']==158.3]
 
 # a_final_defense.to_csv(r'[ENTER YOUR PATH HERE]')
-
