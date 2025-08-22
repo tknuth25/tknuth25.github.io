@@ -188,7 +188,7 @@
           $('#csvTable').DataTable({
             data: rows,
             columns: headers.map(key => ({ title: key, data: key })),
-            pageLength: 25,
+            pageLength: 10,
             responsive: true
           });
         } catch (err) {
@@ -225,7 +225,7 @@
           $('#csvTable1').DataTable({
             data: rows,
             columns: headers.map(key => ({ title: key, data: key })),
-            pageLength: 25,
+            pageLength: 10,
             responsive: true
           });
         } catch (err) {
@@ -243,6 +243,7 @@
 
 </body>
 </html>
+
 
 
 
