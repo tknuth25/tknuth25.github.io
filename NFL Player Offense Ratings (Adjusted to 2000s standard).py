@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import requests
@@ -437,4 +436,5 @@ offense_final = pd.concat(offense_df_list,ignore_index=True)
 perfect_offense = offense_final.loc[offense_final['rating_adj_1']==158.3]
 
 # offense_final.to_csv(r'[ENTER YOUR PATH HERE]')
+
 
