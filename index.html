@@ -94,7 +94,7 @@
 
   <h1>NFL Positional Ratings Project</h1>
 
-  <!-- Python Script -->
+  <!-- Offense Script and Dataset -->
   <div class="card">
     <h2>Football Reference Webscraper - Offense</h2>
     <div class="code-container">
@@ -103,18 +103,25 @@
   </div>
 
   <div class="card">
+    <h2>Offense Ratings (1932 - 2025)</h2>
+    <div id="banner-success" class="success-banner">✅ Dataset loaded</div>
+    <div id="banner-error" class="error-banner">❌ Failed to load dataset</div>
+    <table id="csvTable" class="display"></table>
+  </div>
+  
+  <!-- Defense Script and Dataset -->
+  <div class="card">
     <h2>Football Reference Webscraper - Defense</h2>
     <div class="code-container">
       <pre><code class="language-python" id="script-content1"></code></pre>
     </div>
   </div>
 
-  <!-- Dataset -->
   <div class="card">
-    <h2>Offense Ratings (1932 - 2025)</h2>
+    <h2>Defense Ratings (1940 - 2025)</h2>
     <div id="banner-success" class="success-banner">✅ Dataset loaded</div>
     <div id="banner-error" class="error-banner">❌ Failed to load dataset</div>
-    <table id="csvTable" class="display"></table>
+    <table id="csvTable1" class="display"></table>
   </div>
 
   <script>
@@ -122,6 +129,7 @@
     $.fn.dataTable.ext.errMode = 'none';
 
     // Load Python scripts
+    // Offense
     fetch("NFL Player Offense Ratings (Adjusted to 2000s standard).py")
       .then(response => {
         if (!response.ok) throw new Error("Could not fetch Python script");
@@ -137,7 +145,8 @@
         document.getElementById("script-content").textContent =
           "❌ Error loading script: " + err.message;
       });
-
+    
+    // Defense
     fetch("NFL Player Defense Ratings (Adjusted to 2000s standard).py")
       .then(response => {
         if (!response.ok) throw new Error("Could not fetch Python script");
@@ -154,7 +163,9 @@
           "❌ Error loading script: " + err.message;
       });
 
-    // Load CSV
+    // Load CSVs
+
+    // Offense
     Papa.parse("NFL Offensive Ratings Data Build (2000s) (TK).csv", {
       download: true,
       header: true,
@@ -190,10 +201,49 @@
         document.getElementById("banner-error").style.display = "block";
       }
     });
+
+  // Defense
+  Papa.parse("NFL Defensive Ratings Data Build (2000s) (TK).csv", {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        try {
+          let rows = results.data;
+          if (!rows || rows.length === 0) throw new Error("CSV is empty");
+
+          const headers = Object.keys(rows[0]);
+
+          rows = rows.map(row => {
+            const cleaned = {};
+            headers.forEach(h => { cleaned[h] = row[h] ?? ""; });
+            return cleaned;
+          });
+
+          document.getElementById("banner-success").style.display = "block";
+
+          $('#csvTable1').DataTable({
+            data: rows,
+            columns: headers.map(key => ({ title: key, data: key })),
+            pageLength: 25,
+            responsive: true
+          });
+        } catch (err) {
+          console.error("DataTables init error:", err);
+          document.getElementById("banner-error").style.display = "block";
+        }
+      },
+      error: function(err) {
+        console.error("PapaParse error:", err);
+        document.getElementById("banner-error").style.display = "block";
+      }
+    });
+    
   </script>
 
 </body>
 </html>
+
 
 
 
